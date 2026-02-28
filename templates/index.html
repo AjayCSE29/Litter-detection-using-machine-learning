@@ -1,0 +1,115 @@
+<!--
+This is the main index.html file which wil utilise the backend
+to produce the output to the end user, I've designed it to be minimal
+but you can be creative and design it however you want.
+
+This simple HTML frame is creates a canvas for a camera and displays it,
+then there will be two buttons, one to select the folder in which the 
+image will be saved, you must save the image in-order to verify it using 
+the provided CNN model, you can improve (or I may updare) this project 
+by establishing a real time identification of objects without using buttons.
+
+This is beginner friendly project for beginners to easily understand
+the workings on how to train and implement a CNN model so that 
+even very beginners can learn and train to deploy thier own CNN model.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Litter detection</title>
+     <style>
+     <!-- This is the --style-- section, you can make a seperate .css file
+     for this too to make it more customized-->
+         body{
+             background:#111;
+             color:white;
+             text-align:center;
+             font-family:Arial;
+         }
+        
+        <!-- Below is the video window's size, customize it however your need is -->
+        
+         video{
+             width:500px;
+             border:3px solid white;
+             border-radius:10px;
+             transform: scaleX(-1); <!-- This is to flip the camera so that it looks like a mirror -->
+         }
+
+         button{
+             padding:10px 20px;
+             margin-top:15px;
+             font-size:16px;
+             cursor:pointer;
+         }
+     </style>
+</head>
+<body>
+
+    <h1>Litter detection using machine learning</h1>
+    <video id="video" autoplay playsinline></video> <!-- Creating video window -->
+    <br>
+    <button onclick="chooseFolder()">Select Save Folder</button> <!-- This is the button which you will choose the folder in which the images will be stored which will be later utilized by the CNN model to verify -->
+    <button onclick="findOut()">Find Out</button> <!-- This calls the Python code to utilise the given captured image and verifies it using the provided CNN model-->
+    <h2 id="result">Output will appear here</h2> <!-- Place where the PREDICTED_LABEL will be displayed -->
+
+    <canvas id="canvas" style="display:none;"></canvas> <!-- Creation of canvas -->
+
+    <script>
+        <!-- The javascript code which we will use to connect the frontend
+        with the backend, you can also create a seperate javascript file
+        for this. -->
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        let folderHandle = null;
+        
+        <!-- function to start the camera and to display it on screen-->
+        async function startCamera(){
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video:true,
+                audio:false
+            });
+            video.srcObject = stream;
+        }
+        startCamera();
+        
+        <!-- The function which enables the user to select a folder to save the images-->
+        async function chooseFolder(){ 
+            folderHandle = await window.showDirectoryPicker(); 
+                }
+        <!-- The function which fetches the output from the backend-->
+        async function findOut() {
+            if(!folderHandle){
+            alert("Select folder first!");
+            return;
+        }
+
+            const ctx = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video,0,0);
+        
+            const blob = await new Promise(resolve =>
+                canvas.toBlob(resolve,"image/jpg")
+            );
+        
+            const fileName = "IMAGE"; <!--Image and its path-->
+
+            const fileHandle = await folderHandle.getFileHandle(fileName, {create:true});
+            const writable = await fileHandle.createWritable();
+
+            await writable.write(blob);
+            await writable.close();
+
+            fetch("/run-python")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerHTML =
+                        "The object is: " + data.output;
+                }); <!--FINAL OUTPUT-->
+        }   
+    </script>
+
+</body>
+</html>
