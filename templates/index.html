@@ -19,8 +19,8 @@ even very beginners can learn and train to deploy thier own CNN model.
 <head>
     <title>Litter detection</title>
      <style>
-     <!-- This is the --style-- section, you can make a seperate .css file
-     for this too to make it more customized-->
+     /* This is the --style-- section, you can make a seperate .css file 
+     for this too to make it more customized */
          body{
              background:#111;
              color:white;
@@ -28,13 +28,13 @@ even very beginners can learn and train to deploy thier own CNN model.
              font-family:Arial;
          }
         
-        <!-- Below is the video window's size, customize it however your need is -->
+        /*Below is the video window's size, customize it however your need is*/
         
          video{
              width:500px;
              border:3px solid white;
              border-radius:10px;
-             transform: scaleX(-1); <!-- This is to flip the camera so that it looks like a mirror -->
+             transform: scaleX(-1); /* This is to flip the camera so that it looks like a mirror */
          }
 
          button{
@@ -57,14 +57,14 @@ even very beginners can learn and train to deploy thier own CNN model.
     <canvas id="canvas" style="display:none;"></canvas> <!-- Creation of canvas -->
 
     <script>
-        <!-- The javascript code which we will use to connect the frontend
+        /* The javascript code which we will use to connect the frontend
         with the backend, you can also create a seperate javascript file
-        for this. -->
+        for this. */
         const video = document.getElementById("video");
         const canvas = document.getElementById("canvas");
         let folderHandle = null;
         
-        <!-- function to start the camera and to display it on screen-->
+        //function to start the camera and to display it on screen 
         async function startCamera(){
             const stream = await navigator.mediaDevices.getUserMedia({
                 video:true,
@@ -74,11 +74,11 @@ even very beginners can learn and train to deploy thier own CNN model.
         }
         startCamera();
         
-        <!-- The function which enables the user to select a folder to save the images-->
+        //The function which enables the user to select a folder to save the images
         async function chooseFolder(){ 
             folderHandle = await window.showDirectoryPicker(); 
                 }
-        <!-- The function which fetches the output from the backend-->
+        //The function which fetches the output from the backend
         async function findOut() {
             if(!folderHandle){
             alert("Select folder first!");
@@ -94,7 +94,7 @@ even very beginners can learn and train to deploy thier own CNN model.
                 canvas.toBlob(resolve,"image/jpg")
             );
         
-            const fileName = "IMAGE"; <!--Image and its path-->
+            const fileName = "IMAGE"; //Image and its path
 
             const fileHandle = await folderHandle.getFileHandle(fileName, {create:true});
             const writable = await fileHandle.createWritable();
@@ -107,7 +107,7 @@ even very beginners can learn and train to deploy thier own CNN model.
                 .then(data => {
                     document.getElementById("result").innerHTML =
                         "The object is: " + data.output;
-                }); <!--FINAL OUTPUT-->
+                }); //FINAL OUTPUT
         }   
     </script>
 
