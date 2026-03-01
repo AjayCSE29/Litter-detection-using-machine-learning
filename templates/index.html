@@ -94,7 +94,7 @@ even very beginners can learn and train to deploy thier own CNN model.
                 canvas.toBlob(resolve,"image/jpg")
             );
         
-            const fileName = "IMAGE"; //Image and its path
+            const fileName = "IMAGE"; //Image name with its extension {example: image.jpg}
 
             const fileHandle = await folderHandle.getFileHandle(fileName, {create:true});
             const writable = await fileHandle.createWritable();
